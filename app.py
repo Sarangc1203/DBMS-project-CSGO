@@ -20,8 +20,5 @@ def main():
 	return output
 
 if __name__ == '__main__':
-	# print(config.PATH)
-
-	
 
 	app.run()
