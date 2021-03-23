@@ -1,0 +1,33 @@
+1.
+sudo apt-get install python3-venv
+
+2.
+source venv/bin/activate
+
+3.
+sudo apt-get install python3-pip
+sudo apt-get install libpq-dev
+
+4.
+pip3 install Flask
+pip3 install psycopg2
+
+5.
+copy the following lines from pg_hba.conf:
+
+#Should allow connection without password
+host    all all 0.0.0.0/0   trust
+host    all all ::0/0   trust
+
+and paste in:
+sudo vi /etc/postgresql/13/main/pg_hba.conf
+
+6.
+sudo service postgresql reload
+
+7.
+./run_server.sh
+
+8.
+Server is live at:
+http://127.0.0.1:5000/

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+DATABASE_HOST=127.0.0.1 DATABASE_USERNAME=postgres DATABASE_PORT=5432 python3 app.py
