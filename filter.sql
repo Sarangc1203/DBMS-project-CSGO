@@ -22,6 +22,10 @@ CREATE TABLE filtered_dmg AS (
     SELECT ER.* FROM esea_dmg AS ER, match_filter as MF WHERE ER.file = MF.match
 );
 
+CREATE TABLE weapons AS (
+    select distinct wp_type, wp from esea_dmg order by wp_type, wp
+);
+
 SELECT count(distinct file) FROM filtered_kills as tmp;
 
 
@@ -32,3 +36,5 @@ COPY filtered_kills TO '/home/sarang/Desktop/Codes/COL362/Project/Database/filte
 COPY filtered_rounds TO '/home/sarang/Desktop/Codes/COL362/Project/Database/filtered_esea_meta_demos.csv' DELIMITER ',' CSV HEADER;
 
 COPY filtered_dmg TO '/home/sarang/Desktop/Codes/COL362/Project/Database/filtered_esea_master_dmg_demos.csv' DELIMITER ',' CSV HEADER;
+
+COPY weapons TO '/home/sarang/Desktop/Codes/COL362/Project/weapons.csv' DELIMITER ',' CSV HEADER;
