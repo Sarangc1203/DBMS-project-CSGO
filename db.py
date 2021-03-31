@@ -13,7 +13,7 @@ class Database:
         self.dbname = config.DATABASE_NAME
         self.conn = None
 
-        print(f'Path: {config.PATH}')
+        # print(f'Path: {config.PATH}')
         print("Database obj created!")
         print(f'Host={self.host}')
 
