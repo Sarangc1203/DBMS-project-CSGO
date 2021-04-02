@@ -28,7 +28,7 @@ from coordi_conversion import convert_x, convert_y
 #     writer(readHeader, readData, filename, "update")
 
 def main():
-	inp = open('./Database/Filtered_data/filtered_esea_master_dmg_demos.csv', mode ='r')
+	inp = open('./Database/Filtered_data/filtered_esea_master_kills_demos.csv', mode ='r')
 	csvFile = csv.DictReader(inp)
 	csvFile = [row for row in csvFile]
 
@@ -40,14 +40,19 @@ def main():
 
 		row['att_pos_x'] = convert_x(float(lines['att_pos_x']))
 		row['att_pos_y'] = convert_y(float(lines['att_pos_y']))
-		row['vic_pos_x'] = convert_x(float(lines['vic_pos_x']))
-		row['vic_pos_y'] = convert_y(float(lines['vic_pos_y']))
+		row['nade_land_x'] = convert_x(float(lines['nade_land_x']))
+		row['nade_land_y'] = convert_y(float(lines['nade_land_y']))
+		
+		if row['vic_pos_x']:
+			row['vic_pos_x'] = convert_x(float(lines['vic_pos_x']))
+		if row['vic_pos_y']:
+			row['vic_pos_y'] = convert_y(float(lines['vic_pos_y']))
 
 		up_dt.append(row)
 	
 	headers = csvFile[0].keys()
 
-	out = open("./Database/Filtered_data/test_dmg.csv", "w", newline='')
+	out = open("./Database/Filtered_data/test_kills.csv", "w", newline='')
 
 	out_file = csv.DictWriter(out, delimiter=',', fieldnames=headers)
 	out_file.writerow(dict((heads, heads) for heads in headers))

@@ -117,6 +117,32 @@ CREATE TABLE test_dmg (
     vic_pos_y int
 );
 
+CREATE TABLE test_grenade (
+    file text,
+    round smallint,
+    seconds decimal(12,4),
+    att_team text,
+    vic_team text,
+    att_id bigint,
+    vic_id decimal,
+    att_side text,
+    vic_side text,
+    hp_dmg smallint,
+    arm_dmg smallint,
+    is_bomb_planted boolean,
+    bomb_site text,
+    hitbox text,
+    nade text,
+    att_rank smallint,
+    vic_rank decimal,
+    att_pos_x int,
+    att_pos_y int,
+    nade_land_x int,
+    nade_land_y int,
+    vic_pos_x int,
+    vic_pos_y int
+);
+
 -- CREATE TABLE mm_grenade (
 --     serial_no bigint,
 --     file text,
@@ -194,6 +220,8 @@ CREATE TABLE test_dmg (
 -- \copy esea_dmg from 'D:\6th sem\col362 database management\project\archive\esea_master_dmg_demos.part2.csv' delimiter ',' csv header;
 
 \copy test_dmg from '/home/sarang/Desktop/Codes/COL362/Project/Database/Filtered_data/test_dmg.csv' delimiter ',' csv header;
+
+\copy test_grenade from '/home/sarang/Desktop/Codes/COL362/Project/Database/Filtered_data/test_grenade.csv' delimiter ',' csv header;
 
 \copy esea_grenade from '/home/sarang/Desktop/Codes/COL362/Project/Database/esea_master_grenades_demos.part1.csv' delimiter ',' csv header;
 -- \copy esea_grenade from 'D:\6th sem\col362 database management\project\archive\esea_master_grenades_demos.part2.csv' delimiter ',' csv header;

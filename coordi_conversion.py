@@ -72,7 +72,8 @@ def draw_points(x_list, y_list, PointRadius):
     img.close()
 
 
-def draw_figure(x_list, y_list, delta):
+def draw_figure(x_list_list, y_list_list, delta, color_list, name="out"):
+    
     im = Image.open('de_dust2.png')
     pixelMap = im.load()
 
@@ -82,10 +83,12 @@ def draw_figure(x_list, y_list, delta):
 
     mask = [[0 for i in range(img.size[0])] for j in range(img.size[1])]
 
-    for (x,y) in zip(x_list,y_list):
-        for i in range(x, x+delta):
-            for j in range(y, y+delta):
-                mask[i][1024-j] = 1
+    for ind, (x_list, y_list, color) in enumerate(zip(x_list_list,y_list_list, color_list)):
+        for (x,y) in zip(x_list,y_list):
+            # print(f'x: {x}, delta: {delta}')
+            for i in range(x, x+delta):
+                for j in range(y, y+delta):
+                    mask[i][1024-j] = ind+1
 
     for i in range(img.size[0]):
         for j in range(img.size[1]):
@@ -97,12 +100,13 @@ def draw_figure(x_list, y_list, delta):
             
             
             if mask[i][j]:
-                pixelsNew[i,j] = (0,0,255,255)
+                # print(f'{i}, {j}: \t {mask[i][j]-1}')
+                pixelsNew[i,j] = color_list[mask[i][j]-1]
             else:
                 pixelsNew[i,j] = pixelMap[i,j]
                 
     # img.show()
-    img.save("static/out.png")
+    img.save(f"static/{name}.png")
     img.close()
 
 def convert_x(x):

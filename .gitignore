@@ -3,5 +3,5 @@ __pycache__
 Database/*
 !Database/weapons_price.csv
 !Database/db_build.sql
-static/out.png
+static/out*.png
 out.png

@@ -29,9 +29,9 @@ CREATE TABLE weapons AS (
 SELECT count(distinct file) FROM filtered_kills as tmp;
 
 
-COPY filtered_grenade TO '/home/sarang/Desktop/Codes/COL362/Project/Database/filtered_esea_master_grenades_demos.csv' DELIMITER ',' CSV HEADER;
+COPY filtered_grenade TO '/home/sarang/Desktop/Codes/COL362/Project/Database/Filtered_data/filtered_esea_master_grenades_demos.csv' DELIMITER ',' CSV HEADER;
 
-COPY filtered_kills TO '/home/sarang/Desktop/Codes/COL362/Project/Database/filtered_esea_master_kills_demos.csv' DELIMITER ',' CSV HEADER;
+COPY filtered_kills TO '/home/sarang/Desktop/Codes/COL362/Project/Database/Filtered_data/filtered_esea_master_kills_demos.csv' DELIMITER ',' CSV HEADER;
 
 COPY filtered_rounds TO '/home/sarang/Desktop/Codes/COL362/Project/Database/filtered_esea_meta_demos.csv' DELIMITER ',' CSV HEADER;
 
