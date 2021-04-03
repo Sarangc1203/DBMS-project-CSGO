@@ -239,6 +239,57 @@ def show_q4():
 
 	return render_template('show_q3.html')
 
+@app.route('/query6')
+def query6():
+	return render_template('query6.html')
+
+@app.route('/show_q6', methods=['POST'])
+def show_q6():
+	print([key for key in request.form.keys()])
+
+	budget = int(request.form['budget'])
+
+	map = request.form['map']
+	team_side = request.form['team_side']
+
+	wp_type = request.form['wp_type']
+
+	print("-------", map, team_side, budget, "-------")
+
+	# query = "drop view budget_data_t; drop view budget_data_ct; drop view weapon_data_t; drop view weapon_data_ct; SELECT * from map_data;"
+	# result = db_obj.execute_query(query)
+
+	query = '''
+	WITH weapon_data_team as (
+		with weapon_data as
+		(
+			select wp_type,wp,att_side,AVG(hp_dmg) as health_damage,AVG(arm_dmg) as armor_damage
+			from (select file,round,hp_dmg,arm_dmg,wp,wp_type,att_side from test_dmg where wp!='Unknown' AND map=\''''+map+'''\' ''' + ('' if wp_type=='All' else 'AND wp_type=\''+wp_type+'\'') + ''') as a1
+			group by wp_type,wp,att_side
+			order by wp_type,health_damage desc, armor_damage desc,wp
+		)
+
+		select wp_type,wp,att_side,price,health_damage,armor_damage
+		from (select * from weapon_price where price is not NULL and weapon_price.''' + ('ct' if team_side=='CounterTerrorist' else 't') + ''' = 't') as a2 natural join weapon_data
+		where att_side= \''''+team_side+'''\' AND price<='''+str(budget)+'''
+	)
+
+	select wp_type,wp,price
+	from(select wp_type,wp,att_side,price,health_damage,armor_damage,rank() OVER (PARTITION BY wp_type ORDER BY health_damage desc,armor_damage desc,wp) as rank
+		from weapon_data_team
+		) as a4
+	where rank <=1
+	;
+	'''
+
+	print(query)
+	result = db_obj.execute_query(query)
+	# print(result)
+
+	# print("query done!!")
+
+	return render_template('show_q6.html', output_table=result)
+
 @app.route('/query8')
 def query8():
 	return render_template('query8.html')

@@ -1,8 +1,9 @@
 drop view budget_data_ct;
 drop view budget_data_t;
-drop view weapon_price_ct;
-drop view weapon_price_t;
-create view weapon_price_ct as  
+drop view weapon_data_ct;
+drop view weapon_data_t;
+
+create view weapon_data_ct as  
 	(with weapon_data as
 		(select wp_type,hitbox,wp,att_side,AVG(hp_dmg) as health_damage,AVG(arm_dmg) as armor_damage
 		from (select file,round,hp_dmg,arm_dmg,hitbox,wp,wp_type,att_side from esea_dmg where wp!='Unknown') as a1
@@ -15,7 +16,8 @@ create view weapon_price_ct as
 	where att_side= 'CounterTerrorist'
 	)
 ;
-create view weapon_price_t as  
+
+create view weapon_data_t as  
 	(with weapon_data as
 		(select wp_type,hitbox,wp,att_side,AVG(hp_dmg) as health_damage,AVG(arm_dmg) as armor_damage
 		from (select file,round,hp_dmg,arm_dmg,hitbox,wp,wp_type,att_side from esea_dmg where wp!='Unknown') as a1
