@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <a href="http://localhost:5000/"> <img src="{{url_for('static', filename='home.png')}}"  height=50/> </a>
+  </head>
+  <style>
+    table, th, td {border: 1px solid black; }
+  </style>
+  <body>
+    <h1>Result table:</h1>
+<!-- style="border: 1px solid black" -->
+    <table>
+        <tr>
+          <th>Equipment</th>
+          <th>Grenade</th>
+          <th>Heavy</th>
+          <th>Pistol</th>
+          <th>Rifle</th>
+          <th>SMG</th>
+          <th>Sniper</th>
+          <th>Price</th>
+        </tr>
+        
+        {% for row in output_table %}
+            <tr>
+               <td>{{row[0]}}</td>
+               <td>{{row[1]}}</td> 
+               <td>{{row[2]}}</td>
+               <td>{{row[3]}}</td>
+               <td>{{row[4]}}</td> 
+               <td>{{row[5]}}</td>
+               <td>{{row[6]}}</td>
+               <td>{{row[7]}}</td> 
+            </tr>
+        {% endfor %}
+      </table>
+    </ul>
+
+  </body>
+
+</html>

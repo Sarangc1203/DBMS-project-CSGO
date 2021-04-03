@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <style>
+        column { float: left; width: 50%; }
+    </style>
+    <a href="http://localhost:5000/"> <img src="{{url_for('static', filename='home.png')}}"  height=50/> </a>
+  </head>
+  <body>
+    <h1>Hotspots on a map</h1>
+
+    <form action="http://localhost:5000/show_q9" method="post">
+
+        <!-- <p>Map: <input type = "text" name="map"/> </p> -->
+
+        <label for="maps">Map:</label>
+        <select id="maps" name="map">
+            <option value="de_dust2">Dust 2</option>
+            <option value="de_mirage">Mirage</option>
+            <option value="de_inferno">Inferno</option>
+            <option value="de_overpass">Overpass</option>
+            <option value="de_cache">Cache</option>
+        </select>
+
+        <br>
+        <br>
+
+        <label for="budget">Budget:</label>
+        <input type = "text" id="budget" name="budget" value="10000"/>
+
+        <br>
+        <br>
+
+        <label for="team_side">Team Side:</label>
+        <select id="team_side" name="team_side">
+            <option value="CounterTerrorist">Counter Terrorist</option>
+            <option value="Terrorist">Terrorist</option>
+        </select>
+
+        <p><input type="submit" value="Submit"/></p>
+    </form>
+  </body>
+
+</html>
