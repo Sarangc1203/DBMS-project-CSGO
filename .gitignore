@@ -9,7 +9,6 @@ Database/*
 !Database/table_xy_to_pixel.py
 !Database/test_db_build_2.sql
 !Database/test_db_build_3.sql
-!Database/db.py
-!Database/config.py
+!Database/load_test_data.sql
 static/out*.png
 out.png

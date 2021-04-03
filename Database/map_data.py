@@ -53,7 +53,7 @@ map_info['de_train'] = ('de_train', 2262, 2447, 1024, 1024, -2436, -2469)
 
 
 def draw_point(x1, y1, x2, y2, PointRadius, map):
-    im = Image.open(f'{map}.png')
+    im = Image.open(f'static/{map}.png')
     pixelMap = im.load()
 
     img = Image.new( im.mode, im.size)
@@ -72,7 +72,7 @@ def draw_point(x1, y1, x2, y2, PointRadius, map):
 
 
 def draw_points(x_list, y_list, PointRadius, map):
-    im = Image.open(f'{map}.png')
+    im = Image.open(f'static/{map}.png')
     pixelMap = im.load()
 
     img = Image.new( im.mode, im.size)
@@ -115,7 +115,7 @@ def draw_points(x_list, y_list, PointRadius, map):
 
 def draw_figure(x_list_list, y_list_list, delta, color_list, map, name="out"):
     
-    im = Image.open(f'{map}.png')
+    im = Image.open(f'static/{map}.png')
     # im = Image.open(f'de_dust2.png')
     pixelMap = im.load()
 

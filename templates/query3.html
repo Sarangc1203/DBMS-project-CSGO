@@ -1,0 +1,175 @@
+<html>
+  <head>
+    <style>
+        column { float: left; width: 50%; }
+    </style>
+    <a href="http://localhost:5000/"> <img src="{{url_for('static', filename='home.png')}}"  height=50/> </a>
+  </head>
+  <body>
+    <h1>Best location for using a weapon</h1>
+
+    <form action="http://localhost:5000/show_q3" method="post">
+
+        <!-- <p>Map: <input type = "text" name="map"/> </p> -->
+
+        <label for="delta">Delta: </label>
+        <select id="delta" name="delta">
+            <option value=8>8</option>
+            <option value=16 selected>16 (default)</option>
+            <option value=32>32</option>
+            <option value=64>64</option>
+        </select>
+
+        <br>
+        <br>
+
+        <label for="maps">Map:</label>
+        <select id="maps" name="map">
+            <option value="de_dust2">Dust 2</option>
+            <option value="de_mirage">Mirage</option>
+            <option value="de_inferno">Inferno</option>
+            <option value="de_overpass">Overpass</option>
+            <option value="de_cache">Cache</option>
+        </select>
+
+        <br>
+        <br>
+
+        <label for="topx">Number of locations:</label>
+        <input type = "text" id="topx" name="topx" value="5"/>
+
+        <br>
+
+        <label for="is_bomb_planted">Bomb Planted?</label>
+        <input type="checkbox" id="is_bomb_planted" name="is_bomb_planted" value="t">
+        | 
+        <label for="bomb_site">Bomb-Site: </label>
+        <select id="bomb_site" name="bomb_site">
+            <option value="None">None</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+        </select>
+
+        <br>
+        <br>
+
+        <div class="column">
+            <label for="ct_bool">Counter Terrorist</label>
+            <input type="checkbox" id="ct_bool" name="ct_bool" value="t">
+
+            <br>
+
+            <label for="ct_weapon">Weapon: </label>
+            <select id="ct_weapon" name="ct_weapon">
+                <option value="CZ">Pistol - CZ</option>
+                <option value="Deagle">Pistol - Deagle</option>
+                <option value="DualBarettas">Pistol - DualBarettas</option>
+                <option value="FiveSeven">Pistol - FiveSeven</option>
+                <option value="Glock">Pistol - Glock</option>
+                <option value="P2000">Pistol - P2000</option>
+                <option value="P250">Pistol - P250</option>
+                <option value="Tec9">Pistol - Tec9</option>
+                <option value="USP">Pistol - USP</option>
+
+                <option value="Bizon">SMG - Bizon</option>
+                <option value="Mac10">SMG - Mac10</option>
+                <option value="MP7">SMG - MP7</option>
+                <option value="MP9">SMG - MP9</option>
+                <option value="P90">SMG - P90</option>
+                <option value="UMP">SMG - UMP</option>
+
+                <option value="AK47">Rifle - AK47</option>
+                <option value="AUG">Rifle - AUG</option>
+                <option value="Famas">Rifle - Famas</option>
+                <option value="Gallil">Rifle - Gallil</option>
+                <option value="M4A1">Rifle - M4A1</option>
+                <option value="M4A4">Rifle - M4A4</option>
+                <option value="SG556">Rifle - SG556</option>
+
+                <option value="AWP">Sniper - AWP</option>
+                <option value="G3SG1">Sniper - G3SG1</option>
+                <option value="Scar20">Sniper - Scar20</option>
+                <option value="Scout">Sniper - Scout</option>
+
+                <option value="M249">Heavy - M249</option>
+                <option value="Negev">Heavy - Negev</option>
+                <option value="Nova">Heavy - Nova</option>
+                <option value="SawedOff">Heavy - SawedOff</option>
+                <option value="Swag7">Heavy - Swag7</option>
+                <option value="XM1014">Heavy - XM1014</option>
+
+                <option value="Flash">Grenade - Flash</option>
+                <option value="HE">Grenade - HE</option>
+                <option value="Incendiary">Grenade - Incendiary</option>
+                <option value="Molotov">Grenade - Molotov</option>
+                <option value="Smoke">Grenade - Smoke</option>
+
+                <option value="Knife">Equipment - Knife</option>
+                <option value="Zeus">Equipment - Zeus</option>
+            </select>
+        </div>
+
+        <br>
+
+        <div class="column">
+            <label for="t_bool">Terrorist</label>
+            <input type="checkbox" id="t_bool" name="t_bool" value="t">
+
+            <br>
+
+            <label for="t_weapon">Weapon: </label>
+            <select id="t_weapon" name="t_weapon">
+                <option value="CZ">Pistol - CZ</option>
+                <option value="Deagle">Pistol - Deagle</option>
+                <option value="DualBarettas">Pistol - DualBarettas</option>
+                <option value="FiveSeven">Pistol - FiveSeven</option>
+                <option value="Glock">Pistol - Glock</option>
+                <option value="P2000">Pistol - P2000</option>
+                <option value="P250">Pistol - P250</option>
+                <option value="Tec9">Pistol - Tec9</option>
+                <option value="USP">Pistol - USP</option>
+
+                <option value="Bizon">SMG - Bizon</option>
+                <option value="Mac10">SMG - Mac10</option>
+                <option value="MP7">SMG - MP7</option>
+                <option value="MP9">SMG - MP9</option>
+                <option value="P90">SMG - P90</option>
+                <option value="UMP">SMG - UMP</option>
+
+                <option value="AK47">Rifle - AK47</option>
+                <option value="AUG">Rifle - AUG</option>
+                <option value="Famas">Rifle - Famas</option>
+                <option value="Gallil">Rifle - Gallil</option>
+                <option value="M4A1">Rifle - M4A1</option>
+                <option value="M4A4">Rifle - M4A4</option>
+                <option value="SG556">Rifle - SG556</option>
+
+                <option value="AWP">Sniper - AWP</option>
+                <option value="G3SG1">Sniper - G3SG1</option>
+                <option value="Scar20">Sniper - Scar20</option>
+                <option value="Scout">Sniper - Scout</option>
+
+                <option value="M249">Heavy - M249</option>
+                <option value="Negev">Heavy - Negev</option>
+                <option value="Nova">Heavy - Nova</option>
+                <option value="SawedOff">Heavy - SawedOff</option>
+                <option value="Swag7">Heavy - Swag7</option>
+                <option value="XM1014">Heavy - XM1014</option>
+
+                <option value="Flash">Grenade - Flash</option>
+                <option value="HE">Grenade - HE</option>
+                <option value="Incendiary">Grenade - Incendiary</option>
+                <option value="Molotov">Grenade - Molotov</option>
+                <option value="Smoke">Grenade - Smoke</option>
+
+                <option value="Knife">Equipment - Knife</option>
+                <option value="Zeus">Equipment - Zeus</option>
+            </select>
+        </div>
+        
+
+        <p><input type="submit" value="Submit"/></p>
+    </form>
+  </body>
+
+</html>
