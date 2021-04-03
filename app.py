@@ -239,5 +239,56 @@ def show_q4():
 
 	return render_template('show_q3.html')
 
+@app.route('/query8')
+def query8():
+	return render_template('query8.html')
+
+@app.route('/show_q8', methods=['POST'])
+def show_q8():
+
+	if os.path.isfile('static/out.png'):
+		# print("File exists!")
+		os.remove('static/out.png')
+	# else:
+	# 	print("File Error!")
+
+	print([key for key in request.form.keys()])
+
+	delta = int(request.form['delta'])
+
+	map = request.form['map']
+	topx = request.form['topx']
+	grenade_type = request.form['grenade']
+	round_time = request.form['round_time']
+
+	ct_bool = 't' if 'ct_bool' in request.form.keys() else 'f'
+
+	t_bool = 't' if 't_bool' in request.form.keys() else 'f'
+
+	print(delta, map, topx, ct_bool, t_bool)
+
+	x_list_list = []
+	y_list_list = []
+	color_list = []
+	
+	if ct_bool == 't':
+		query3 = f"select {delta}*x as x, {delta}*y as y, count from (select x, y, count, rank() over(order by count desc) from (select nade_land_x / {delta} as x, nade_land_y / {delta} as y, count(*) from (select tg.file, tg.round, tg.nade_land_x, tg.nade_land_y, tg.seconds-fr.start_seconds as seconds, tg.att_side, tg.map from (select * from test_grenade where nade=\'{grenade_type}\') as tg, test_rounds as fr where tg.file=fr.file and tg.round=fr.round) as tmp where att_side='CounterTerrorist' and map=\'{map}\' and seconds<={round_time} group by x, y) as tmp1) as tmp2 where rank <= {topx};"
+		result3 = db_obj.execute_query(query3)
+		x_list_list.append([row[0] for row in result3])
+		y_list_list.append([row[1] for row in result3])
+		color_list.append(CS_GO_CT_COLOR)
+	
+	if t_bool == 't':
+		query3 = f"select {delta}*x as x, {delta}*y as y, count from (select x, y, count, rank() over(order by count desc) from (select nade_land_x / {delta} as x, nade_land_y / {delta} as y, count(*) from (select tg.file, tg.round, tg.nade_land_x, tg.nade_land_y, tg.seconds-fr.start_seconds as seconds, tg.att_side, tg.map from (select * from test_grenade where nade=\'{grenade_type}\') as tg, test_rounds as fr where tg.file=fr.file and tg.round=fr.round) as tmp where att_side='Terrorist' and map=\'{map}\' and seconds<={round_time} group by x, y) as tmp1) as tmp2 where rank <= {topx};"
+		result3 = db_obj.execute_query(query3)
+		x_list_list.append([row[0] for row in result3])
+		y_list_list.append([row[1] for row in result3])
+		color_list.append(CS_GO_T_COLOR)
+
+	draw_figure(x_list_list, y_list_list, delta, color_list, map, "out")
+	# , opt=f'{delta}\t{map}\t{topx}\t{grenade_type}\t{round_time}\t{ct_bool}\t{t_bool}', output='out_3.png'
+
+	return render_template('show_q3.html')
+
 if __name__ == '__main__':
 	app.run()

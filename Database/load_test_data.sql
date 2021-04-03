@@ -102,3 +102,16 @@ CREATE TABLE test_rounds (
 );
 
 \copy test_rounds from '/home/sarang/Desktop/Codes/COL362/Project/Database/test_rounds.csv' delimiter ',' csv header;
+
+DROP TABLE weapon_price;
+
+CREATE TABLE weapon_price(
+    wp_type text,
+    wp text,
+    price int,
+    ct boolean,
+    t boolean
+ 
+);
+
+\copy weapon_price from '/home/sarang/Desktop/Codes/COL362/Project/Database/weapons_price.csv' delimiter ',' csv header;

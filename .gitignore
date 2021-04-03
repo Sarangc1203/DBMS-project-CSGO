@@ -10,5 +10,6 @@ Database/*
 !Database/test_db_build_2.sql
 !Database/test_db_build_3.sql
 !Database/load_test_data.sql
+!Database/preamble_weapon.sql
 static/out*.png
 out.png
