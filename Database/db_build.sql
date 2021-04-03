@@ -83,12 +83,12 @@ CREATE TABLE esea_rounds (
 
 CREATE TABLE map_data (
     MapName text,
-    EndX decimal(25,20),
-    EndY decimal(25,20),
+    EndX int,
+    EndY int,
     ResX int,
     ResY int,
-    StartX decimal(25,20),
-    StartY decimal(25,20)
+    StartX int,
+    StartY int
 );
 
 CREATE TABLE test_dmg (
@@ -220,6 +220,8 @@ CREATE TABLE test_grenade (
 -- \copy esea_dmg from 'D:\6th sem\col362 database management\project\archive\esea_master_dmg_demos.part2.csv' delimiter ',' csv header;
 
 \copy test_dmg from '/home/sarang/Desktop/Codes/COL362/Project/Database/Filtered_data/test_dmg.csv' delimiter ',' csv header;
+
+\copy map_data from '/home/sarang/Desktop/Codes/COL362/Project/Database/map_data.csv' delimiter ',' csv header;
 
 \copy test_grenade from '/home/sarang/Desktop/Codes/COL362/Project/Database/Filtered_data/test_grenade.csv' delimiter ',' csv header;
 

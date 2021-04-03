@@ -3,5 +3,13 @@ __pycache__
 Database/*
 !Database/weapons_price.csv
 !Database/db_build.sql
+!Database/build_test_db.sh
+!Database/test_db_build_1.sql
+!Database/map_data.py
+!Database/table_xy_to_pixel.py
+!Database/test_db_build_2.sql
+!Database/test_db_build_3.sql
+!Database/db.py
+!Database/config.py
 static/out*.png
 out.png
