@@ -1,0 +1,166 @@
+<html>
+  <head>
+    <a href="http://localhost:5000/"> <img src="{{url_for('static', filename='home.png')}}"  height=50/> </a>
+  </head>
+  <style>
+    table, th, td {border: 1px solid black; }
+  </style>
+  <body>
+    <h1>Overall Stats:</h1>
+<!-- style="border: 1px solid black" -->
+    <table>
+        <tr>
+          <th>Player_ID</th>
+          <th>Kills</th>
+          <th>Assists</th>
+          <th>Deaths</th>
+          <th>K/D Ratio</th>
+          <th># MVP</th>
+        </tr>
+        
+        {% for row in result1 %}
+            <tr>
+               <td>{{row[0]}}</td>
+               <td>{{row[1]}}</td> 
+               <td>{{row[2]}}</td>
+               <td>{{row[3]}}</td>
+               <td>{{row[4]}}</td> 
+               <td>{{row[5]}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% if condition == True %}
+        {% block content %}
+            <h2>Highest Kills Matches</h2>
+            <table>
+                <tr>
+                <th>Match ID</th>
+                <th>Team Name</th>
+                <th>Team Side</th>
+                <th>Player_ID</th>
+                <th># Kills</th>
+                </tr>
+                
+                {% for row in result3 %}
+                    <tr>
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td> 
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                    <td>{{row[4]}}</td> 
+                    </tr>
+                {% endfor %}
+            </table>
+        
+            <h2>Lowest Kills Matches</h2>
+            <table>
+                <tr>
+                <th>Match ID</th>
+                <th>Team Name</th>
+                <th>Team Side</th>
+                <th>Player_ID</th>
+                <th># Kills</th>
+                </tr>
+                
+                {% for row in result4 %}
+                    <tr>
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td> 
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                    <td>{{row[4]}}</td> 
+                    </tr>
+                {% endfor %}
+            </table>
+        
+            <h2>Highest Assists Matches</h2>
+            <table>
+                <tr>
+                <th>Match ID</th>
+                <th>Team Name</th>
+                <th>Team Side</th>
+                <th>Player_ID</th>
+                <th># Assists</th>
+                </tr>
+                
+                {% for row in result5 %}
+                    <tr>
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td> 
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                    <td>{{row[4]}}</td> 
+                    </tr>
+                {% endfor %}
+            </table>
+        
+            <h2>Lowest Assists Matches</h2>
+            <table>
+                <tr>
+                <th>Match ID</th>
+                <th>Team Name</th>
+                <th>Team Side</th>
+                <th>Player_ID</th>
+                <th># Assists</th>
+                </tr>
+                
+                {% for row in result6 %}
+                    <tr>
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td> 
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                    <td>{{row[4]}}</td> 
+                    </tr>
+                {% endfor %}
+            </table>
+        
+            <h2>Lowest Deaths Matches</h2>
+            <table>
+                <tr>
+                <th>Match ID</th>
+                <th>Team Name</th>
+                <th>Team Side</th>
+                <th>Player_ID</th>
+                <th># Deaths</th>
+                </tr>
+                
+                {% for row in result8 %}
+                    <tr>
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td> 
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                    <td>{{row[4]}}</td> 
+                    </tr>
+                {% endfor %}
+            </table>
+        
+            <h2>Highest Deaths Matches</h2>
+            <table>
+                <tr>
+                <th>Match ID</th>
+                <th>Team Name</th>
+                <th>Team Side</th>
+                <th>Player_ID</th>
+                <th># Deaths</th>
+                </tr>
+                
+                {% for row in result7 %}
+                    <tr>
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td> 
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                    <td>{{row[4]}}</td> 
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endblock content %}
+    {% endif %}
+    
+
+  </body>
+
+</html>

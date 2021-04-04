@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <style>
+        column { float: left; width: 50%; }
+    </style>
+    <a href="http://localhost:5000/"> <img src="{{url_for('static', filename='home.png')}}"  height=50/> </a>
+  </head>
+  <body>
+    <h1>Player and Match statistics - Show Player Stats</h1>
+
+    <form action="http://localhost:5000/show_q2a" method="post">
+
+        <!-- <p>Map: <input type = "text" name="map"/> </p> -->
+
+        <label for="maps">Map:</label>
+        <select id="maps" name="map">
+            <option value="all">All</option>
+            <option value="de_dust2">Dust 2</option>
+            <option value="de_mirage">Mirage</option>
+            <option value="de_inferno">Inferno</option>
+            <option value="de_overpass">Overpass</option>
+            <option value="de_cache">Cache</option>
+        </select>
+
+        <br>
+        <br>
+
+        <label for="player_id">Player_id:</label>
+        <input type = "text" id="player_id" name="player_id" value="76561198118059131"/>
+        Examples: 76561198042626630, 76561198294251949, 76561198138757622, 76561198060670916, 76561198362960424.
+
+        <br>
+        <br>
+<!-- 
+        <label for="per_match">Display per match stats</label>
+        <input type="checkbox" id="per_match" name="per_match" value="t"> -->
+
+        <label for="disp_hl">Display matches in which highest/lowest (kills/deaths/assists)</label>
+        <input type="checkbox" id="disp_hl" name="disp_hl" value="t" Checked>
+
+        <br>
+        <br>
+
+        <p><input type="submit" value="Submit"/></p>
+    </form>
+  </body>
+
+</html>

@@ -144,9 +144,119 @@ def query1():
 def query2():
 	return render_template('query2.html')
 
-@app.route('/show_q2', methods=['POST'])
-def show_q2():
-	return render_template('show_q3.html')
+@app.route('/query2a')
+def query2a():
+	return render_template('query2a.html')
+
+@app.route('/show_q2a', methods=['POST'])
+def show_q2a():
+
+	map = request.form['map']
+	player_id = request.form['player_id']
+	disp_hl = True if 'disp_hl' in request.form.keys() else False
+	per_match = True if 'per_match' in request.form.keys() else False
+
+	query1 = '''
+	with kill_data2 as (select att_id,SUM(count) as kills from kill_data WHERE att_id=''' +player_id+ ('' if map=='all' else ''' AND map=\'''' + map+'\'') + ''' group by att_id),
+	assist_data2 as (select att_id,SUM(count) as assists from assist_data WHERE att_id=''' +player_id+ ('' if map=='all' else ''' AND map=\'''' + map+'\'') + ''' group by att_id),
+	death_data2 as (select vic_id as att_id,SUM(count) as deaths from death_data WHERE vic_id=''' +player_id+ ('' if map=='all' else ''' AND map=\'''' + map+'\'') + ''' group by vic_id),
+	mvp2 as (select att_id,COUNT(*) as num_mvp from mvp WHERE att_id=''' +player_id+ ('' if map=='all' else ''' AND map=\'''' + map+'\'') + ''' group by att_id) 
+
+	select a3.att_id,kills,assists,deaths,ROUND( cast(kills as decimal)/deaths,2) as kd_ratio,coalesce(num_mvp,0) from ((kill_data2 natural join assist_data2) as a2 natural join death_data2) as a3 left outer join mvp2 on a3.att_id = mvp2.att_id
+	;
+
+	'''
+
+	# select att_id,kills,assists,deaths,ROUND( cast(kills as decimal)/deaths,2) as kd_ratio,num_mvp from kill_data2 natural join assist_data2 natural join death_data2 left outer join mvp2
+
+	result1 = db_obj.execute_query(query1)
+
+	result2 = []
+	
+
+	query3 = '''
+	with kill_data2 as (select file,att_team,att_side,att_id, map, SUM(count) as count from kill_data group by file,att_team,att_side,att_id, map)
+	select file,att_team,att_side,att_id,count
+	from(select  file,att_team,att_side,att_id,map,count,rank() OVER (PARTITION BY file ORDER BY file,count desc,att_id) as rank
+		from kill_data2
+		) as a4
+	where rank <=1 AND att_id=''' +player_id+ ('' if map=='all' else ''' AND map=\'''' + map+'\'') + ''' 
+	;
+	'''
+
+	result3 = db_obj.execute_query(query3)
+	
+	query4 = '''
+	with kill_data2 as (select file,att_team,att_side,att_id, map, SUM(count) as count from kill_data group by file,att_team,att_side,att_id, map)
+	select file,att_team,att_side,att_id,count
+	from(select  file,att_team,att_side,att_id,map,count,rank() OVER (PARTITION BY file ORDER BY file,count,att_id) as rank
+		from kill_data2
+		) as a4
+	where rank <=1 AND att_id=''' +player_id+ ('' if map=='all' else ''' AND map=\'''' + map+'\'') + ''' 
+	;
+	'''
+
+	result4 = db_obj.execute_query(query4)
+
+	query5 = '''
+	with assist_data2 as (select file,att_team,att_side,att_id, map, SUM(count) as count from assist_data group by file,att_team,att_side,att_id, map)
+	select file,att_team,att_side,att_id,count
+	from(select  file,att_team,att_side,att_id,map,count,rank() OVER (PARTITION BY file ORDER BY file,count desc,att_id) as rank
+		from assist_data2
+		) as a4
+	where rank <=1 AND att_id=''' +player_id+ ('' if map=='all' else ''' AND map=\'''' + map+'\'') + ''' 
+	;
+	'''
+
+	result5 = db_obj.execute_query(query5)
+
+	query6 = '''
+	with assist_data2 as (select file,att_team,att_side,att_id, map, SUM(count) as count from assist_data group by file,att_team,att_side,att_id, map)
+	select file,att_team,att_side,att_id,count
+	from(select  file,att_team,att_side,att_id,map,count,rank() OVER (PARTITION BY file ORDER BY file,count,att_id) as rank
+		from assist_data2
+		) as a4
+	where rank <=1 AND att_id=''' +player_id+ ('' if map=='all' else ''' AND map=\'''' + map+'\'') + ''' 
+	;
+	'''
+
+	result6 = db_obj.execute_query(query6)
+
+	query7 = '''
+	with death_data2 as (select file,vic_team,vic_side,vic_id, map, SUM(count) as count from death_data group by file,vic_team,vic_side,vic_id, map)
+	select file, vic_team, vic_side, vic_id,count
+	from(select  file,vic_team, vic_side, vic_id, map, count,rank() OVER (PARTITION BY file ORDER BY file,count desc,vic_id) as rank
+		from death_data2
+		) as a4
+	where rank <=1 AND vic_id=''' +player_id+ ('' if map=='all' else ''' AND map=\'''' + map+'\'') + ''' 
+	;
+	'''
+
+	result7 = db_obj.execute_query(query7)
+
+
+	query8 = '''
+	with death_data2 as (select file,vic_team,vic_side,vic_id, map, SUM(count) as count from death_data group by file,vic_team,vic_side,vic_id, map)
+	select file, vic_team, vic_side, vic_id,count
+	from(select  file,vic_team, vic_side, vic_id, map, count,rank() OVER (PARTITION BY file ORDER BY file,count,vic_id) as rank
+		from death_data2
+		) as a4
+	where rank <=1 AND vic_id=''' +player_id+ ('' if map=='all' else ''' AND map=\'''' + map+'\'') + ''' 
+	;
+	'''
+
+	result8 = db_obj.execute_query(query8)
+
+	print(result1)
+	print(result2)
+	print(result3)
+	print(result4)
+	print(result5)
+	print(result6)
+	print(result7)
+	print(result8)
+
+	return render_template('show_q2a.html', condition=disp_hl, result1=result1, result2=result2, result3=result3, result4=result4, result5=result5, result6=result6, result7=result7, result8=result8)
 
 @app.route('/query3')
 def query3():
