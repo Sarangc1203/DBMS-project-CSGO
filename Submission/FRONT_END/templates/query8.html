@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <style>
+        column { float: left; width: 50%; }
+    </style>
+    <a href="http://localhost:5026/"> <img src="{{url_for('static', filename='home.png')}}"  height=50/> </a>
+  </head>
+  <body>
+    <h1>Hotspots on a map</h1>
+
+    <form action="http://localhost:5026/show_q8" method="post">
+
+        <!-- <p>Map: <input type = "text" name="map"/> </p> -->
+
+        <label for="delta">Delta: </label>
+        <select id="delta" name="delta">
+            <option value=8>8</option>
+            <option value=16 selected>16 (default)</option>
+            <option value=32>32</option>
+            <option value=64>64</option>
+        </select>
+
+        <br>
+        <br>
+
+        <label for="maps">Map:</label>
+        <select id="maps" name="map">
+            <option value="de_dust2">Dust 2</option>
+            <option value="de_mirage">Mirage</option>
+            <option value="de_inferno">Inferno</option>
+            <option value="de_overpass">Overpass</option>
+            <option value="de_cache">Cache</option>
+        </select>
+
+        <br>
+        <br>
+
+        <label for="topx">Number of locations:</label>
+        <input type = "text" id="topx" name="topx" value="5"/>
+
+        <br>
+        <br>
+
+        <label for="grenade">Grenade:</label>
+        <select id="grenade" name="grenade">
+            <option value="HE">HE</option>
+            <option value="Smoke">Smoke</option>
+            <option value="Flash">Flash</option>
+            <option value="Decoy">Decoy</option>
+            <option value="Molotov">Molotov</option>
+        </select>
+
+        <label for="round_time">in the first </label>
+        <input type = "text" id="round_time" name="round_time" value="30"/> seconds.
+
+        <br>
+        <br>
+
+        <div class="column">
+            <label for="ct_bool">Counter Terrorist</label>
+            <input type="checkbox" id="ct_bool" name="ct_bool" value="t">
+        </div>
+
+        <br>
+
+        <div class="column">
+            <label for="t_bool">Terrorist</label>
+            <input type="checkbox" id="t_bool" name="t_bool" value="t">
+        </div>
+        
+
+        <p><input type="submit" value="Submit"/></p>
+    </form>
+  </body>
+
+</html>

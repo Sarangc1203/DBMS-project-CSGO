@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <style>
+        column { float: left; width: 50%; }
+    </style>
+    <a href="http://localhost:5026/"> <img src="{{url_for('static', filename='home.png')}}"  height=50/> </a>
+  </head>
+  <body>
+    <h1>Hotspots on a map</h1>
+
+    <form action="http://localhost:5026/show_q10" method="post">
+
+        <!-- <p>Map: <input type = "text" name="map"/> </p> -->
+
+        <label for="match">Match ID:</label>
+        <input type = "text" id="match" name="match" value="esea_match_13770997.dem"/>
+        Example: esea_match_13782890.dem, esea_match_13780204.dem, esea_match_13780018.dem, esea_match_13780164.dem, esea_match_13780477.dem
+
+        <br>
+        <br>
+
+        <label for="round">Round:</label>
+        <input type = "text" id="round" name="round" value="1"/>
+
+        <br>
+
+        <p><input type="submit" value="Submit"/></p>
+    </form>
+  </body>
+
+</html>

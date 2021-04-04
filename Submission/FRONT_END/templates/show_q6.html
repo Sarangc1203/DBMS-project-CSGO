@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <a href="http://localhost:5026/"> <img src="{{url_for('static', filename='home.png')}}"  height=50/> </a>
+  </head>
+  <style>
+    table, th, td {border: 1px solid black; }
+  </style>
+  <body>
+    <h1>Result table:</h1>
+<!-- style="border: 1px solid black" -->
+    <table>
+        <tr>
+          <th>wp_type</th>
+          <th>wp</th>
+          <th>price</th>
+        </tr>
+        
+        {% for row in output_table %}
+            <tr>
+               <td>{{row[0]}}</td>
+               <td>{{row[1]}}</td> 
+               <td>{{row[2]}}</td>
+            </tr>
+        {% endfor %}
+      </table>
+    </ul>
+
+  </body>
+
+</html>
