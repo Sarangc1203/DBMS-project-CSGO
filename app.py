@@ -140,6 +140,43 @@ def display():
 def query1():
 	return render_template('query1.html')
 
+@app.route('/show_q1', methods=['POST'])
+def show_q1():
+
+	map = request.form['map']
+	round_type = request.form['round_type']
+
+	query = '''
+	with valid_rounds as /*aayush*/
+	(
+		select file,round,winner_side
+		from test_rounds where round_type = \''''+round_type+'''\' and map=\''''+map+'''\'
+	),
+	bombed_rounds as /*aayush*/
+	(
+		select distinct file,round,bomb_site
+		from test_dmg
+		where is_bomb_planted = true
+	)
+	select * from
+	(
+		with valid_bombed_rounds as
+		(
+			select valid_rounds.file,valid_rounds.round,winner_side,bomb_site
+			from valid_rounds,bombed_rounds
+			where valid_rounds.file = bombed_rounds.file and valid_rounds.round = bombed_rounds.round
+		)
+		select winner_side,bomb_site,count(*)
+		from valid_bombed_rounds
+		group by winner_side,bomb_site
+	) as foo;
+	'''
+
+	result = db_obj.execute_query(query)
+	print(result)
+
+	return render_template('show_q1.html', output_table=result)
+
 @app.route('/query2')
 def query2():
 	return render_template('query2.html')
@@ -404,6 +441,318 @@ def show_q6():
 
 	return render_template('show_q6.html', output_table=result)
 
+@app.route('/query7')
+def query7():
+	return render_template('query7.html')
+
+@app.route('/show_q7', methods=['POST'])
+def show_q7():
+	print([key for key in request.form.keys()])
+
+	map = request.form['map']
+	round_type = request.form['round_type']
+	ct_alive = request.form['ct_alive']
+	t_alive = request.form['t_alive']
+
+	is_bomb_planted = 't' if 'is_bomb_planted' in request.form.keys() else 'f'
+	bomb_site = request.form['bomb_site']
+	if bomb_site == 'None':
+		bomb_site = 'A'
+
+	# query = "drop view budget_data_t; drop view budget_data_ct; drop view weapon_data_t; drop view weapon_data_ct; SELECT * from map_data;"
+	# result = db_obj.execute_query(query)
+	query = ''
+	if is_bomb_planted == 't':
+		query = '''
+		with filter_hp as /*aayush*/
+		(
+			select test_dmg.file,test_dmg.round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id 
+			from test_dmg,test_rounds 
+			where hp_dmg > 0 and test_dmg.file=test_rounds.file and test_dmg.round=test_rounds.round and test_rounds.round_type = \''''+round_type+'''\' and test_rounds.map=\''''+map+'''\'
+		)
+		,
+		valid_rounds as /*aayush*/
+		(
+			select file,round,winner_side
+			from test_rounds where round_type = \''''+round_type+'''\' and map=\''''+map+'''\'
+		)
+		,
+		bombed_rounds as /*aayush*/
+		(
+			select distinct file,round,bomb_site
+			from test_dmg
+			where is_bomb_planted = true
+		)
+		select * from
+		(
+			with valid_bombed_rounds as /*aayush need to change to valid unbombed for other*/
+			(
+				select valid_rounds.file,valid_rounds.round,winner_side,bomb_site
+				from valid_rounds,bombed_rounds
+				where valid_rounds.file = bombed_rounds.file and valid_rounds.round = bombed_rounds.round and bomb_site=\''''+bomb_site+'''\'
+			)
+			,
+			ranked_a_hp as
+			(
+				select file,round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id,
+				rank() over
+				(
+					partition by file,round,vic_id
+					order by tick,att_side,vic_side,hp_dmg,is_bomb_planted
+				)
+				from filter_hp
+			)
+			select * from
+			(
+				with ranked_hp as /*aayush*/
+				(
+					select ranked_a_hp.file,ranked_a_hp.round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id,rank
+					from ranked_a_hp,valid_bombed_rounds /*aayush change to valid_unbombed*/
+					where ranked_a_hp.file = valid_bombed_rounds.file and ranked_a_hp.round = valid_bombed_rounds.round
+				)
+				select * from
+				(
+				with recursive summed_hp(file,round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id,rank,curr_health_loss) as
+				(
+					select *,hp_dmg as curr_health_loss
+					from ranked_hp
+					where rank=1
+					union 
+					select ranked_hp.file,ranked_hp.round,ranked_hp.tick,ranked_hp.att_side,ranked_hp.vic_side,ranked_hp.hp_dmg,ranked_hp.is_bomb_planted,ranked_hp.vic_id,ranked_hp.rank,(summed_hp.curr_health_loss+ranked_hp.hp_dmg) as curr_health_loss
+					from ranked_hp,summed_hp
+					where ranked_hp.file = summed_hp.file and ranked_hp.round = summed_hp.round and ranked_hp.vic_id = summed_hp.vic_id and ranked_hp.rank = summed_hp.rank+1 
+				)
+				select * from
+				(
+					with death_hp as
+					(
+						select file,round,tick,vic_side,is_bomb_planted
+						from summed_hp where curr_health_loss = 100
+					)
+					select * from
+					(
+						with tick_death_ranked_hp as
+						(
+							select file,round,tick,vic_side,is_bomb_planted,
+							rank() over
+							(
+								partition by file,round
+								order by tick,vic_side,is_bomb_planted
+							) rank2
+							from death_hp
+						)
+						select * from
+						(
+							with recursive match_snapshot(file,round,is_bomb_planted,ct_alive,t_alive,rank2) as
+							(
+								select distinct file,round,false as is_bomb_planted,5 as ct_alive,5 as t_alive,0::bigint as rank2
+								from summed_hp
+
+								union
+
+								select match_snapshot.file,match_snapshot.round,tick_death_ranked_hp.is_bomb_planted,
+								(
+									CASE
+									WHEN vic_side = 'CounterTerrorist'
+									THEN ct_alive-1
+									ELSE ct_alive
+									END
+								) AS ct_alive,
+								(
+									CASE
+									WHEN vic_side = 'Terrorist'
+									THEN t_alive-1
+									ELSE t_alive
+									END
+								) AS t_alive,
+								tick_death_ranked_hp.rank2
+								from
+								match_snapshot,tick_death_ranked_hp
+								where match_snapshot.file = tick_death_ranked_hp.file and match_snapshot.round = tick_death_ranked_hp.round and tick_death_ranked_hp.rank2 = match_snapshot.rank2+1                       
+							)
+							select * from
+							(
+								with full_match_snapshot as
+								(
+									select * from match_snapshot 
+									union
+									select match_snapshot1.file,match_snapshot1.round,true as is_bomb_planted,match_snapshot1.ct_alive,match_snapshot1.t_alive,match_snapshot1.rank2
+									from match_snapshot as match_snapshot1,match_snapshot as match_snapshot2
+									where match_snapshot1.file = match_snapshot2.file and match_snapshot1.round = match_snapshot2.round and match_snapshot1.is_bomb_planted = false and match_snapshot2.is_bomb_planted = true and match_snapshot2.rank2 = match_snapshot1.rank2+1
+								)
+								select * from
+								(
+									/*aayush*/
+									with instance_occured as
+									(
+										select file,round
+										from full_match_snapshot
+										where ct_alive = '''+ct_alive+''' and t_alive = '''+t_alive+''' and is_bomb_planted = true
+									)
+									
+									select winner_side,count(*)
+									from instance_occured,valid_rounds
+									where instance_occured.file = valid_rounds.file and instance_occured.round = valid_rounds.round
+									group by winner_side
+									
+								) as foo
+							) as foo                    
+						) as foo
+					) as foo
+				) as foo
+				) as foo
+			) as foo
+		) as foo
+		;
+		'''
+	else:
+		query = '''
+		with filter_hp as /*aayush*/
+		(
+			select test_dmg.file,test_dmg.round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id 
+			from test_dmg,test_rounds 
+			where hp_dmg > 0 and test_dmg.file=test_rounds.file and test_dmg.round=test_rounds.round and test_rounds.round_type = \''''+round_type+'''\' and test_rounds.map=\''''+map+'''\'
+		)
+		,
+		valid_rounds as /*aayush*/
+		(
+			select file,round,winner_side
+			from test_rounds where round_type = \''''+round_type+'''\' and map=\''''+map+'''\'
+		)
+		select * from
+		(
+			with ranked_a_hp as
+			(
+				select file,round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id,
+				rank() over
+				(
+					partition by file,round,vic_id
+					order by tick,att_side,vic_side,hp_dmg,is_bomb_planted
+				)
+				from filter_hp
+			)
+			select * from
+			(
+				with ranked_hp as /*aayush*/
+				(
+					select ranked_a_hp.file,ranked_a_hp.round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id,rank
+					from ranked_a_hp,valid_rounds /*aayush change to valid_unbombed*/
+					where ranked_a_hp.file = valid_rounds.file and ranked_a_hp.round = valid_rounds.round
+				)
+				select * from
+				(
+				with recursive summed_hp(file,round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id,rank,curr_health_loss) as
+				(
+					select *,hp_dmg as curr_health_loss
+					from ranked_hp
+					where rank=1
+					union 
+					select ranked_hp.file,ranked_hp.round,ranked_hp.tick,ranked_hp.att_side,ranked_hp.vic_side,ranked_hp.hp_dmg,ranked_hp.is_bomb_planted,ranked_hp.vic_id,ranked_hp.rank,(summed_hp.curr_health_loss+ranked_hp.hp_dmg) as curr_health_loss
+					from ranked_hp,summed_hp
+					where ranked_hp.file = summed_hp.file and ranked_hp.round = summed_hp.round and ranked_hp.vic_id = summed_hp.vic_id and ranked_hp.rank = summed_hp.rank+1 
+				)
+				select * from
+				(
+					with death_hp as
+					(
+						select file,round,tick,vic_side,is_bomb_planted
+						from summed_hp where curr_health_loss = 100
+					)
+					select * from
+					(
+						with tick_death_ranked_hp as
+						(
+							select file,round,tick,vic_side,is_bomb_planted,
+							rank() over
+							(
+								partition by file,round
+								order by tick,vic_side,is_bomb_planted
+							) rank2
+							from death_hp
+						)
+						select * from
+						(
+							with recursive match_snapshot(file,round,is_bomb_planted,ct_alive,t_alive,rank2) as
+							(
+								select distinct file,round,false as is_bomb_planted,5 as ct_alive,5 as t_alive,0::bigint as rank2
+								from summed_hp
+
+								union
+
+								select match_snapshot.file,match_snapshot.round,tick_death_ranked_hp.is_bomb_planted,
+								(
+									CASE
+									WHEN vic_side = 'CounterTerrorist'
+									THEN ct_alive-1
+									ELSE ct_alive
+									END
+								) AS ct_alive,
+								(
+									CASE
+									WHEN vic_side = 'Terrorist'
+									THEN t_alive-1
+									ELSE t_alive
+									END
+								) AS t_alive,
+								tick_death_ranked_hp.rank2
+								from
+								match_snapshot,tick_death_ranked_hp
+								where match_snapshot.file = tick_death_ranked_hp.file and match_snapshot.round = tick_death_ranked_hp.round and tick_death_ranked_hp.rank2 = match_snapshot.rank2+1                       
+							)
+							select * from
+							(
+								with full_match_snapshot as
+								(
+									select * from match_snapshot 
+									union
+									select match_snapshot1.file,match_snapshot1.round,true as is_bomb_planted,match_snapshot1.ct_alive,match_snapshot1.t_alive,match_snapshot1.rank2
+									from match_snapshot as match_snapshot1,match_snapshot as match_snapshot2
+									where match_snapshot1.file = match_snapshot2.file and match_snapshot1.round = match_snapshot2.round and match_snapshot1.is_bomb_planted = false and match_snapshot2.is_bomb_planted = true and match_snapshot2.rank2 = match_snapshot1.rank2+1
+								)
+								select * from
+								(
+									/*aayush*/
+									with instance_occured as
+									(
+										select file,round
+										from full_match_snapshot
+										where ct_alive = '''+ct_alive+''' and t_alive = '''+t_alive+''' and is_bomb_planted = false
+									)
+									
+									select winner_side,count(*)
+									from instance_occured,valid_rounds
+									where instance_occured.file = valid_rounds.file and instance_occured.round = valid_rounds.round
+									group by winner_side
+									
+								) as foo
+							) as foo                    
+						) as foo
+					) as foo
+				) as foo
+				) as foo
+			) as foo
+		) as foo
+		;
+		'''
+
+	print(query)
+	result = db_obj.execute_query(query)
+
+	if len(result)==0:
+		result = [('CounterTerrorist', 0), ('Terrorist', 0)]
+	elif len(result)==1:
+		if result[0][0]=='CounterTerrorist':
+			result.append(('Terrorist', 0))
+		else:
+			result1 = result[0]
+			result = [('CounterTerrorist', 0)]
+			result.append(result1)
+
+	print(result)
+	# print("query done!!")
+
+	return render_template('show_q7.html', output_table=result)
+
 @app.route('/query8')
 def query8():
 	return render_template('query8.html')
@@ -517,6 +866,158 @@ def show_q9():
 	# print("query done!!")
 
 	return render_template('show_q9.html', output_table=result)
+
+@app.route('/query10')
+def query10():
+	return render_template('query10.html')
+
+@app.route('/show_q10', methods=['POST'])
+def show_q10():
+
+	print([key for key in request.form.keys()])
+
+	match = request.form['match']
+	round = request.form['round']
+
+	query = '''
+	with filter_hp as
+	(
+	select file,round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id from test_dmg where hp_dmg > 0 AND file=\''''+match+'''\' and round='''+round+'''
+	)
+	select * from
+	(
+		with ranked_hp as
+		(
+			select file,round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id,
+			rank() over
+			(
+				partition by file,round,vic_id
+				order by tick,att_side,vic_side,hp_dmg,is_bomb_planted
+			)
+			from filter_hp
+		)
+		select * from
+		(
+			with recursive summed_hp(file,round,tick,att_side,vic_side,hp_dmg,is_bomb_planted,vic_id,rank,curr_health_loss) as
+			(
+				select *,hp_dmg as curr_health_loss
+				from ranked_hp
+				where rank=1
+				union 
+				select ranked_hp.file,ranked_hp.round,ranked_hp.tick,ranked_hp.att_side,ranked_hp.vic_side,ranked_hp.hp_dmg,ranked_hp.is_bomb_planted,ranked_hp.vic_id,ranked_hp.rank,(summed_hp.curr_health_loss+ranked_hp.hp_dmg) as curr_health_loss
+				from ranked_hp,summed_hp
+				where ranked_hp.file = summed_hp.file and ranked_hp.round = summed_hp.round and ranked_hp.vic_id = summed_hp.vic_id and ranked_hp.rank = summed_hp.rank+1 
+			)
+			select * from
+			(
+				with death_hp as
+				(
+					select file,round,tick,vic_side,is_bomb_planted
+					from summed_hp where curr_health_loss = 100
+				)
+				select * from
+				(
+					with tick_death_ranked_hp as
+					(
+						select file,round,tick,vic_side,is_bomb_planted,
+						rank() over
+						(
+							partition by file,round
+							order by tick,vic_side,is_bomb_planted
+						) rank2
+						from death_hp
+					)
+					select * from
+					(
+						with recursive match_snapshot(file,round,is_bomb_planted,ct_alive,t_alive,rank2) as
+						(
+							select distinct file,round,false as is_bomb_planted,5 as ct_alive,5 as t_alive,0::bigint as rank2
+							from summed_hp
+
+							union
+
+							select match_snapshot.file,match_snapshot.round,tick_death_ranked_hp.is_bomb_planted,
+							(
+								CASE
+								WHEN vic_side = 'CounterTerrorist'
+								THEN ct_alive-1
+								ELSE ct_alive
+								END
+							) AS ct_alive,
+							(
+								CASE
+								WHEN vic_side = 'Terrorist'
+								THEN t_alive-1
+								ELSE t_alive
+								END
+							) AS t_alive,
+							tick_death_ranked_hp.rank2
+							from
+							match_snapshot,tick_death_ranked_hp
+							where match_snapshot.file = tick_death_ranked_hp.file and match_snapshot.round = tick_death_ranked_hp.round and tick_death_ranked_hp.rank2 = match_snapshot.rank2+1                       
+						)
+						select * from
+						(
+							with full_match_snapshot as
+							(
+								select * from match_snapshot 
+								union
+								select match_snapshot1.file,match_snapshot1.round,true as is_bomb_planted,match_snapshot1.ct_alive,match_snapshot1.t_alive,match_snapshot1.rank2
+								from match_snapshot as match_snapshot1,match_snapshot as match_snapshot2
+								where match_snapshot1.file = match_snapshot2.file and match_snapshot1.round = match_snapshot2.round and match_snapshot1.is_bomb_planted = false and match_snapshot2.is_bomb_planted = true and match_snapshot2.rank2 = match_snapshot1.rank2+1
+							)
+							select * from full_match_snapshot
+							
+							order by rank2,is_bomb_planted
+						) as foo                    
+					) as foo
+				) as foo
+			) as foo
+		) as foo
+	) as foo
+	;
+	'''
+
+	print(query)
+	result = db_obj.execute_query(query)
+	print(result)
+
+	result1 = []
+	restult2 = []
+	ind = len(result)
+	for i, row in enumerate(result):
+		if row[2] == True:
+			ind = i
+			break
+	
+	print(f'i: {i}')
+	result1 = result[:ind]
+	result2 = result[ind+1:]
+	print(f'Result1: {result1}')
+	print(f'Result2: {result2}')
+
+	condition = False
+	bomb_site = 'None'
+	if ind < len(result):
+		condition = True
+		query3 = '''
+		select distinct bomb_site
+		from test_dmg
+		where file=\''''+match+'''\' and round='''+round+''' and is_bomb_planted = true
+		'''
+		result3 = db_obj.execute_query(query3)
+		bomb_site = result3[0][0]
+
+	# print("query done!!")
+	query4 = '''
+	select winner_side
+	from test_rounds
+	where file=\''''+match+'''\' and round='''+round+''';
+	'''
+	result4 = db_obj.execute_query(query4)
+	round_winner = result4[0][0]
+
+	return render_template('show_q10.html', output_table1=result1, output_table2=result2, condition=condition, bomb_site=bomb_site, round_winner=round_winner)
 
 if __name__ == '__main__':
 	app.run()
