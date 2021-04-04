@@ -1020,4 +1020,4 @@ def show_q10():
 	return render_template('show_q10.html', output_table1=result1, output_table2=result2, condition=condition, bomb_site=bomb_site, round_winner=round_winner)
 
 if __name__ == '__main__':
-	app.run(host="localhost", port=5026, debug=True)
+	app.run()

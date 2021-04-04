@@ -12,4 +12,6 @@ Database/*
 !Database/load_test_data.sql
 !Database/preamble_weapon.sql
 static/out*.png
+Submission/DATA_DUMP/data_dump.sql
+Submission/backup_file
 out.png
