@@ -179,11 +179,11 @@ def show_q1():
 
 @app.route('/query2')
 def query2():
-	return render_template('query2.html')
-
-@app.route('/query2a')
-def query2a():
 	return render_template('query2a.html')
+
+# @app.route('/query2a')
+# def query2a():
+# 	return render_template('query2a.html')
 
 @app.route('/show_q2a', methods=['POST'])
 def show_q2a():
@@ -1018,6 +1018,32 @@ def show_q10():
 	round_winner = result4[0][0]
 
 	return render_template('show_q10.html', output_table1=result1, output_table2=result2, condition=condition, bomb_site=bomb_site, round_winner=round_winner)
+
+
+@app.route('/query11')
+def query11():
+	return render_template('query11.html')
+
+@app.route('/show_q11', methods=['POST'])
+def show_q11():
+
+	print([key for key in request.form.keys()])
+
+	old_wp_name = request.form['old_wp_name']
+	new_wp_type = request.form['new_wp_type']
+	new_wp_name = request.form['new_wp_name']
+	new_wp_price = request.form['new_wp_price']
+
+	query = '''
+	UPDATE weapon_price SET wp=\''''+new_wp_name+'''\', wp_type=\''''+new_wp_type+'''\', price='''+new_wp_price+''' where wp=\''''+old_wp_name+'''\';
+	SELECT * FROM weapon_price where wp=\''''+new_wp_name+'''\';
+	'''
+
+	print(query)
+	result = db_obj.execute_query(query)
+	print(result)
+
+	return render_template('show_q11.html', output_table=result)
 
 if __name__ == '__main__':
 	app.run(host="localhost", port=5026, debug=True)

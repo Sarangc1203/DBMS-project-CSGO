@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>CSGO Statictics Analyzer</title>
+    <style>
+        column { float: left; width: 50%; }
+    </style>
+    <a href="http://localhost:5026/"> <img src="{{url_for('static', filename='home.png')}}"  height=50/> </a>
+  </head>
+  <body>
+    <h1>Update Weapon Info</h1>
+
+    <form action="http://localhost:5026/show_q11" method="post">
+
+        <!-- <p>Map: <input type = "text" name="map"/> </p> -->
+
+        <label for="old_wp_name">Old Weapon Name:</label>
+        <input type = "text" id="old_wp_name" name="old_wp_name" value="USP"/>
+
+        <br>
+        <br>
+
+        <label for="new_wp_type">New Weapon Type:</label>
+        <input type = "text" id="new_wp_type" name="new_wp_type" value="Pistol"/>
+
+        <br>
+        <br>
+
+        <label for="new_wp_name">New Weapon Name:</label>
+        <input type = "text" id="new_wp_name" name="new_wp_name" value="USP12"/>
+
+        <br>
+        <br>
+
+        <label for="new_wp_price">New Weapon Price:</label>
+        <input type = "text" id="new_wp_price" name="new_wp_price" value="800"/>
+
+        <br>
+        <br>
+
+        <p><input type="submit" value="Submit"/></p>
+    </form>
+  </body>
+
+</html>

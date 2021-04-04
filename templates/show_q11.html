@@ -1,28 +1,35 @@
 <html>
   <head>
-    <title>CSGO Statictics Analyzer</title>
     <a href="http://localhost:5026/"> <img src="{{url_for('static', filename='home.png')}}"  height=50/> </a>
   </head>
   <style>
     table, th, td {border: 1px solid black; }
   </style>
   <body>
-    <h1>Result table:</h1>
+    <h1>Updated weapon_price Tuple:</h1>
 <!-- style="border: 1px solid black" -->
     <table>
         <tr>
-          <th>Team Side</th>
-          <th># wins in history</th>
+          <th>Weapon Type</th>
+          <th>Weapon Name</th>
+          <th>Price</th>
+          <th>CT avail</th>
+          <th>T avail</th>
         </tr>
         
         {% for row in output_table %}
             <tr>
                <td>{{row[0]}}</td>
-               <td>{{row[1]}}</td> 
+               <td>{{row[1]}}</td>
+               <td>{{row[2]}}</td>
+               <td>{{row[3]}}</td>
+               <td>{{row[4]}}</td>
             </tr>
         {% endfor %}
-      </table>
-    </ul>
+    </table>
+
+    <br>
+    <br>
 
   </body>
 

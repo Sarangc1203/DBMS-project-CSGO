@@ -47,5 +47,5 @@ CREATE TABLE filtered_dmg AS (
 \copy filtered_dmg TO './filtered_esea_master_dmg_demos.csv' DELIMITER ',' CSV HEADER;
 
 -- DROP TABLE filtered_kills;
-DROP TABLE filtered_dmg;
-DROP TABLE filtered_grenade;
+-- DROP TABLE filtered_dmg;
+-- DROP TABLE filtered_grenade;
